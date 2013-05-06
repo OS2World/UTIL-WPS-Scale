@@ -1,0 +1,6 @@
+NAME    SCALE WINDOWAPI
+
+DESCRIPTION 'Displays a red, green, or bluescale'
+
+PROTMODE
+STACKSIZE       0x8000

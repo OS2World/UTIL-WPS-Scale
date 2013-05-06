@@ -1,0 +1,73 @@
+SCALE version 0.95
+
+This is a simple program that draws a grayscale (or redscale, or
+bluescale, or orangescale, or ...) using the palette manager. While
+it's primarily intended to demonstrate how to use the palette manager
+to get *exact* colors for drawing, it also works on systems that don't
+have the palette manager. (Don't expect the display to be very pretty,
+though!)
+
+First, though, the "syntax" for invoking this program is
+
+   SCALE [-r#] [-g#] [-b#]
+
+where items in []'s are optional flags, and # stands for a number from
+0 to 255 inclusive. The flags specify the intensity of that primary component.
+If a component is not specified, it defaults to zero. If *no* components
+are specified, they *all* default to 255. (This is so that you get a
+grayscale by default, rather than a "blackscale"!) You can use '/' instead
+of '-' to specify the flags, and they can be in any order. (You can even
+specify a component more than once, if you like; the rightmost specification
+counts.)
+
+Here are some examples:
+
+   SCALE -r255
+This draws a "redscale" with black on the left and bright red on the right.
+
+   SCALE -g255
+This draws a "greenscale."
+
+   SCALE -b255 -r255
+This draws a "magentascale" since magenta = blue + red.
+
+   SCALE -r255 -g128
+This draws an "orangescale" since orange = red + 1/2 green.
+
+etc.
+
+Now for some fun. Start up my PHYSCOLO, if you have it. Move it so that it
+stretches wide but short, across the bottom of the screen. Then
+
+1) Enter "foo" at the prompt. This will start up six (!) copies of SCALE.
+2) Type CTRL-ESC. You will see the six copies of SCALE listed as
+"Palette-Managed Color Scale." (If the words "Palette-Managed" aren't
+there, your current screen driver doesn't support the Palette Manager!)
+3) Select all the copies of SCALE. (Click on the top one listed, then
+shift-click on the last one. Their names should all be highlighted.)
+4) Tile all the copies of SCALE. (Right-click in the highlighted area,
+then select "Tile.")
+
+The six copies of SCALE should now take up all of the screen (except the
+bottom, which is why you put PHYSCOLO there). Three of the copies of SCALE
+will have nice, smooth scales; the others won't. This is because each
+copy of SCALE requests 64 colors, and you don't have 384 colors! Two things
+worth noticing:
+
+a) If you click on a copy of SCALE that doesn't have a nice, smooth scale,
+it'll get high priority and thus will be granted all the colors it requests.
+However, one of the other copies of SCALE will have to lose colors. Click
+on these windows and watch the colors get reshuffled.
+
+b) The Palette Manager gives higher priority to low-numbered palette entries.
+Thus, on the crude-looking copies of SCALE, you will likely see more shades
+on the left than the right. Your programs should take advantage of this;
+SCALE doesn't, to keep the code simple.
+
+That's it. If you have any questions or comments about SCALE, you can contact
+me at sthiagar@bronze.ucs.indiana.edu on the internet. You can also contact
+me on compuserve at 72175,12; however, I only read my compuserve mail once
+a week.
+
+Raja Thiagarajan
+
