@@ -1,33 +1,42 @@
-/* SCALE.C -- Program to display grayscale (or redscale, or cyanscale, or...)
-   Version 0.94 */
-/* This program is copyright (c) 1992 by Raja Thiagarajan. However, you may
-   use it for any non-commercial purpose. Thanks to Peter Nielsen
-   (pnielsen@finabo.abo.fi) for some clever ideas.
-   You may contact me at sthiagar@bronze.ucs.indiana.edu (internet) or
-   72175,12 (compuserve). I check my internet account almost every
-   day, but only check compuserve once a week or so. */
+//==========================================
+// scale.c : Program to display grayscale (or redscale, or cyanscale, or...)
+// Version 0.96
+// License: 3-Clause BSD License
+// Authors:
+// - Martin Iturbide, 2023
+// - Raja Thiagarajan, 1992
+//==========================================
 
 #include <stdlib.h>         /* include atoi(), ldiv(), max(), min() */
 #define INCL_GPI
 #define INCL_WIN
 #include <os2.h>
 
-MRESULT EXPENTRY ClientWinProc (HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2);
+// This is to remote the min / max error in gcc.
+#ifndef max
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
 
-static USHORT redTarg;
-static USHORT greenTarg;
-static USHORT blueTarg;
+
+MRESULT EXPENTRY ClientWinProc (HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+
+static ULONG redTarg;
+static ULONG greenTarg;
+static ULONG blueTarg;
 
 /* Read redTarg, greenTarg, and blueTarg from the command line */
 VOID ParseArgs (INT ac, CHAR * av[])
 {
-   USHORT j;
+   ULONG j;
    redTarg = greenTarg = blueTarg = 0;
    for (j = 1; j < ac; j++) {
       CHAR a = av[j][0];
       if ((a == '-') || (a == '/')) {
          CHAR a = av[j][1];
-         SHORT v = atoi (&av[j][2]);
+         LONG v = atoi (&av[j][2]);
 #define MIN_VAL 0
 #define MAX_VAL 255
          v = min (max (v, MIN_VAL), MAX_VAL);
@@ -49,7 +58,7 @@ static LONG   hasPalMan;      /* Whether the Palette Manager is available */
 static LONG   colorsToShow;   /* How many colored rectangles to draw */
 static HAB    hab;            /* This program's hab */
 
-INT main (INT argc, CHAR * argv [])
+int main (INT argc, CHAR * argv [])
 {
    HMQ   hmq;         /* The usual bunch of variables for PM programs */
    QMSG  qmsg;
@@ -82,17 +91,17 @@ INT main (INT argc, CHAR * argv [])
 
    hmq = WinCreateMsgQueue (hab, 0);   /* create message queue */
 
-   WinRegisterClass (hab, clientClass, (PFNWP) ClientWinProc, CS_SIZEREDRAW, 0);
+   WinRegisterClass (hab, (PCSZ) clientClass, (PFNWP) ClientWinProc, CS_SIZEREDRAW, 0);
 
       /* Create standard window and client. Note that the title message
          depends on whether the Palette Manager is available or not */
    if (hasPalMan) {
       hwnd = WinCreateStdWindow (HWND_DESKTOP, WS_VISIBLE, &createFlags,
-                                 clientClass, "Palette-Managed Color Scale", 0L,
+                                 (PCSZ) clientClass,(PCSZ) "Palette-Managed Color Scale", 0L,
                                  0UL, 0, &hwndClient);
    } else {
       hwnd = WinCreateStdWindow (HWND_DESKTOP, WS_VISIBLE, &createFlags,
-                                 clientClass, "Color Scale", 0L, 0UL, 0,
+                                 (PCSZ) clientClass, (PCSZ) "Color Scale", 0L, 0UL, 0,
                                  &hwndClient);
    }
 
@@ -107,12 +116,12 @@ INT main (INT argc, CHAR * argv [])
    return 0;
 }
 
-MRESULT EXPENTRY ClientWinProc (HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2)
+MRESULT EXPENTRY ClientWinProc (HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 {
    static HPS    hps;
    static HDC    hdc;
    static HPAL   hpal;
-   static USHORT cWid, cHi; /* client area width and height */
+   static ULONG cWid, cHi; /* client area width and height */
    static BOOL   firstPaint = TRUE; /* Whether this is the first response
                                        to WM_PAINT */
 
@@ -128,9 +137,9 @@ MRESULT EXPENTRY ClientWinProc (HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2)
                   ULONG  tbl [MAX_SHADES];
                   INT    j;
                   for (j = 0; j < colorsToShow; j++) {
-                     USHORT rj = redTarg * j / (colorsToShow - 1);
-                     USHORT gj = greenTarg * j / (colorsToShow - 1);
-                     USHORT bj = blueTarg * j / (colorsToShow - 1);
+                     ULONG rj = redTarg * j / (colorsToShow - 1);
+                     ULONG gj = greenTarg * j / (colorsToShow - 1);
+                     ULONG bj = blueTarg * j / (colorsToShow - 1);
                      tbl [j] = 65536 * rj + 256 * gj + bj;
                   }
                   hpal = GpiCreatePalette (hab, 0L, LCOLF_CONSECRGB,
@@ -166,9 +175,9 @@ MRESULT EXPENTRY ClientWinProc (HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2)
                   if (hasPalMan) { /* use the exact color */
                      GpiSetColor (hps, j);
                   } else { /* find a reasonable facsimile */
-                     USHORT rj = redTarg * j / (colorsToShow - 1);
-                     USHORT gj = greenTarg * j / (colorsToShow - 1);
-                     USHORT bj = blueTarg * j / (colorsToShow - 1);
+                     ULONG rj = redTarg * j / (colorsToShow - 1);
+                     ULONG gj = greenTarg * j / (colorsToShow - 1);
+                     ULONG bj = blueTarg * j / (colorsToShow - 1);
                      LONG i = GpiQueryColorIndex (hps, 0, 65536 * rj
                                                           + 256 * gj + bj);
                      GpiSetColor (hps, i);

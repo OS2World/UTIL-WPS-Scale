@@ -1,6 +1,6 @@
+; WALKER defintion file
+
 NAME    SCALE WINDOWAPI
 
-DESCRIPTION 'Displays a red, green, or bluescale'
+DESCRIPTION     '@#OS2World:0.96#@##1## 27 Nov 2023 20:00:00     ARCAOS-510::::::v0.96@@Displays a red, green, or bluescale'
 
-PROTMODE
-STACKSIZE       0x8000
