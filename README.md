@@ -1,7 +1,8 @@
 UTIL-WPS-Scale
 ==============
-
 Display grayscale using Palette Manager
+
+![Scale ScreenShot](/Wiki/Scale_001.png)
 
 LICENSE
 ===============
